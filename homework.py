@@ -1,5 +1,5 @@
-from typing import Dict, List, Union, Type
 from dataclasses import asdict, dataclass
+from typing import Dict, List, Type, Union
 
 
 @dataclass
@@ -18,28 +18,6 @@ class InfoMessage:
 
     def get_message(self) -> str:
         return self.MESSAGE_TEMPLATE.format(**asdict(self))
-
-# class InfoMessage:
-#     """Информационное сообщение о тренировке."""
-
-#     def __init__(self,
-#                  training_type: str,
-#                  duration: float,
-#                  distance: float,
-#                  speed: float,
-#                  calories: float) -> None:
-#         self.training_type = training_type
-#         self.duration = duration
-#         self.distance = distance
-#         self.speed = speed
-#         self.calories = calories
-
-#     def get_message(self) -> str:
-#         return (f'Тип тренировки: {self.training_type}; '
-#                 f'Длительность: {self.duration:.3f} ч.; '
-#                 f'Дистанция: {self.distance:.3f} км; '
-#                 f'Ср. скорость: {self.speed:.3f} км/ч; '
-#                 f'Потрачено ккал: {self.calories:.3f}.')
 
 
 class Training:
@@ -80,14 +58,12 @@ class Training:
 
 class Running(Training):
     """Тренировка: бег."""
-
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        spent_calories = ((self.CALORIE_MULTIPLIER * self.get_mean_speed()
-                          - self.LINEAR_SHIFT)
-                          * self.weight / self.M_IN_KM
-                          * (self.duration * self.M_IN_HOUR))
-        return spent_calories
+        return ((self.CALORIE_MULTIPLIER * self.get_mean_speed()
+                - self.LINEAR_SHIFT)
+                * self.weight / self.M_IN_KM
+                * (self.duration * self.M_IN_HOUR))
 
 
 class SportsWalking(Training):
@@ -103,8 +79,6 @@ class SportsWalking(Training):
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        # coeff_calorie_1 = 0.035
-        # coeff_calorie_2 = 0.029
         return ((self.CALORIE_MULTIPLIER * self.weight
                 + (self.get_mean_speed()**2 // self.height)
                 * self.CALORIE_MULTIPLIER_2 * self.weight)
@@ -138,8 +112,6 @@ class Swimming(Training):
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        # coeff_calorie_1 = 1.1
-        # coeff_calorie_2 = 2
         return ((self.get_mean_speed() + self.CALORIE_MULTIPLIER)
                 * self.CALORIE_MULTIPLIER_2
                 * self.weight)
@@ -155,8 +127,7 @@ def read_package(workout_type: str, data: List[Union[int, float]]) -> Training:
     }
     if workout_type in available_training:
         return available_training[workout_type](*data)
-    else:
-        raise ValueError("Неизвестный тип тренировки")
+    raise ValueError("Неизвестный тип тренировки")
 
 
 def main(training: Training) -> None:
